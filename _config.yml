@@ -40,7 +40,7 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
@@ -106,3 +106,6 @@ deploy:
   repo: https://github.com/pjpjsocute/ray.github.io.git
   # example, https://github.com/hexojs/hexojs.github.io
   branch: gh-pages
+marked:
+  prependRoot: true
+  postAsset: true
