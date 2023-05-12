@@ -75,9 +75,9 @@
     
       <category term="java" scheme="http://pjpjsocute.github.io/tags/java/"/>
     
-      <category term="力扣之旅" scheme="http://pjpjsocute.github.io/tags/%E5%8A%9B%E6%89%A3%E4%B9%8B%E6%97%85/"/>
-    
       <category term="数据结构" scheme="http://pjpjsocute.github.io/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+    
+      <category term="力扣之旅" scheme="http://pjpjsocute.github.io/tags/%E5%8A%9B%E6%89%A3%E4%B9%8B%E6%97%85/"/>
     
   </entry>
   
@@ -183,11 +183,11 @@
       <category term="技术" scheme="http://pjpjsocute.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
     
     
+      <category term="算法" scheme="http://pjpjsocute.github.io/tags/%E7%AE%97%E6%B3%95/"/>
+    
       <category term="python" scheme="http://pjpjsocute.github.io/tags/python/"/>
     
       <category term="chatGpt" scheme="http://pjpjsocute.github.io/tags/chatGpt/"/>
-    
-      <category term="算法" scheme="http://pjpjsocute.github.io/tags/%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
