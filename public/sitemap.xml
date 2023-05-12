@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://pjpjsocute.github.io/about/index.html</loc>
+    
+    <lastmod>2023-05-12T09:15:46.595Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://pjpjsocute.github.io/2023/05/12/LeetCode/LeetCode-862/</loc>
     
     <lastmod>2023-05-12T08:26:38.934Z</lastmod>
@@ -68,13 +75,6 @@
     <loc>http://pjpjsocute.github.io/tags/index.html</loc>
     
     <lastmod>2023-05-12T04:04:24.601Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://pjpjsocute.github.io/about/index.html</loc>
-    
-    <lastmod>2023-05-12T04:04:06.381Z</lastmod>
     
   </url>
   
