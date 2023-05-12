@@ -5,7 +5,7 @@
 # Site
 title: Ray’ Person blog
 subtitle: ''
-description: ''
+description: 'My bolg'
 keywords:
 author: Ray zhou
 language: en
@@ -97,7 +97,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: next
 
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
