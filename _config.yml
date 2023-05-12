@@ -109,3 +109,6 @@ deploy:
 marked:
   prependRoot: true
   postAsset: true
+math:
+  engine: 'mathjax' 
+  mathjax:
