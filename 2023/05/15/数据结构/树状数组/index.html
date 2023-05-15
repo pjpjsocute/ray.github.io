@@ -30,12 +30,12 @@
 <meta property="og:image" content="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png">
 <meta property="og:image" content="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png">
 <meta property="article:published_time" content="2023-05-15T03:30:14.000Z">
-<meta property="article:modified_time" content="2023-05-15T09:41:02.624Z">
+<meta property="article:modified_time" content="2023-05-15T09:42:56.771Z">
 <meta property="article:author" content="Ray zhou">
-<meta property="article:tag" content="数据结构">
 <meta property="article:tag" content="java">
-<meta property="article:tag" content="树状数组">
 <meta property="article:tag" content="力扣之旅">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="树状数组">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png">
 
@@ -206,7 +206,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-05-15 11:30:14 / 修改时间：17:41:02" itemprop="dateCreated datePublished" datetime="2023-05-15T11:30:14+08:00">2023-05-15</time>
+              <time title="创建时间：2023-05-15 11:30:14 / 修改时间：17:42:56" itemprop="dateCreated datePublished" datetime="2023-05-15T11:30:14+08:00">2023-05-15</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -306,34 +306,19 @@
 <p>接下来只需要找到覆盖了B(6)距离他最近的BIT，即B(8)</p>
 <p>以此类推。</p>
 <p>也就是说，我们只需要找到对于当前BIT(i)，能覆盖它的最近的BIT(j)，并更新他的值。</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<pre><code>我们可以发现：
-
-如果需要BIT(j)覆盖BIT(i)，那么`lowbit(j)&gt;lowbit(i)`，否则肯定无法覆盖，那么可以转换为 `lowbit(i+a)&gt;lowbit(i)`，求最小的a。
-
-
-
-因为lowbit(i)是**整除i的最大的2次幂**，**也就是i最右边的1**。
-
-所以如果 `lowbit(a)&lt;lowbit(i)`，那么`lowbit(i+a)&lt;lowbit(i)`。
-
-举个例子，如果`lowbit(j)`是0100，`lowbit(i)`是0010，如果`lowbit(a+i)一定小于lowbit(i)`(因为最右边的1一定会被保留所以a+i只会取a和i中右1更小的那个)。
-
-
-
-当`lowbit(a)=lowbit(i)`，此时会最右边的1会产生进位，那么最右边的1**一定会向右移**，所以`lowbit(a+i)&gt;lowbit(i)`，一定成立，因此我们可以得到`lowbit(a)=lowbit(i)`
-
-这样我们可以开始写update函数：
-
+<p>我们可以发现：</p>
+<p>如果需要BIT(j)覆盖BIT(i)，那么<code>lowbit(j)&gt;lowbit(i)</code>，否则肯定无法覆盖，那么可以转换为 <code>lowbit(i+a)&gt;lowbit(i)</code>，求最小的a。</p>
+<p>因为lowbit(i)是<strong>整除i的最大的2次幂</strong>，<strong>也就是i最右边的1</strong>。</p>
+<p>所以如果 <code>lowbit(a)&lt;lowbit(i)</code>，那么<code>lowbit(i+a)&lt;lowbit(i)</code>。</p>
+<p>举个例子，如果<code>lowbit(j)</code>是0100，<code>lowbit(i)</code>是0010，如果<code>lowbit(a+i)一定小于lowbit(i)</code>(因为最右边的1一定会被保留所以a+i只会取a和i中右1更小的那个)。</p>
+<p>当<code>lowbit(a)=lowbit(i)</code>，此时会最右边的1会产生进位，那么最右边的1<strong>一定会向右移</strong>，所以<code>lowbit(a+i)&gt;lowbit(i)</code>，一定成立，因此我们可以得到<code>lowbit(a)=lowbit(i)</code></p>
+<p>这样我们可以开始写update函数：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updata</span><span class="params">(<span class="type">int</span> x,<span class="type">int</span> value)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> x; i &lt; bit.length; i += lowbit(i))&#123;</span><br><span class="line">      <span class="comment">//update</span></span><br><span class="line">      bit[i] += value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</code></pre><ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li><h4 id="力扣中的应用"><a href="#力扣中的应用" class="headerlink" title="力扣中的应用"></a>力扣中的应用</h4><ul>
 <li><h4 id="LeetCode-493"><a href="#LeetCode-493" class="headerlink" title="LeetCode-493"></a>LeetCode-493</h4><ul>
 <li><h5 id="Qa"><a href="#Qa" class="headerlink" title="Qa:"></a>Qa:</h5><p>给定一个数组 <code>nums</code> ，如果 <code>i &lt; j</code> 且 <code>nums[i] &gt; 2*nums[j]</code> 我们就将 <code>(i, j)</code> 称作一个<strong><em>重要翻转对\</em></strong>。</p>
@@ -355,6 +340,8 @@
 </ul>
 </li>
 </ul>
+</li>
+</ul>
 <pre><code>- #### 类似的问题还有LeetCode-307 .etc
 </code></pre>
     </div>
@@ -365,10 +352,10 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
               <a href="/tags/java/" rel="tag"># java</a>
-              <a href="/tags/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/" rel="tag"># 树状数组</a>
               <a href="/tags/%E5%8A%9B%E6%89%A3%E4%B9%8B%E6%97%85/" rel="tag"># 力扣之旅</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/" rel="tag"># 树状数组</a>
           </div>
 
         
