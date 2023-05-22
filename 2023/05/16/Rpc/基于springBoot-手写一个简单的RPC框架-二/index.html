@@ -20,30 +20,39 @@
     var CONFIG = {"hostname":"pjpjsocute.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="My bolg">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Ray‘s Blog">
-<meta property="og:url" content="http://pjpjsocute.github.io/index.html">
+  <meta name="description" content="基于springBoot,手写一个简单的RPC框架(二) 继续上一章，实现了服务注册后需要实现服务调用。 服务执行一个RPC的服务调用应该分为以下几步： 请求监听； 解码请求； 方法调用； 返回结果； 接下来将依次实现以上功能； 请求监听需要定义一个RpcRequest请求类，由于后续处理 123456789101112131415161718192021222324252627282930313">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于springBoot,手写一个简单的RPC框架(二)">
+<meta property="og:url" content="http://pjpjsocute.github.io/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/index.html">
 <meta property="og:site_name" content="Ray‘s Blog">
-<meta property="og:description" content="My bolg">
+<meta property="og:description" content="基于springBoot,手写一个简单的RPC框架(二) 继续上一章，实现了服务注册后需要实现服务调用。 服务执行一个RPC的服务调用应该分为以下几步： 请求监听； 解码请求； 方法调用； 返回结果； 接下来将依次实现以上功能； 请求监听需要定义一个RpcRequest请求类，由于后续处理 123456789101112131415161718192021222324252627282930313">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/image-20230522163034434.png">
+<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/image-20230522174913202.png">
+<meta property="article:published_time" content="2023-05-16T07:49:52.000Z">
+<meta property="article:modified_time" content="2023-05-22T10:27:21.662Z">
 <meta property="article:author" content="Ray zhou">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="项目">
+<meta property="article:tag" content="Rpc">
+<meta property="article:tag" content="spi">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://pjpjsocute.github.io/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/image-20230522163034434.png">
 
-<link rel="canonical" href="http://pjpjsocute.github.io/">
+<link rel="canonical" href="http://pjpjsocute.github.io/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Ray‘s Blog</title>
+  <title>基于springBoot,手写一个简单的RPC框架(二) | Ray‘s Blog</title>
   
 
 
@@ -166,208 +175,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/" class="post-title-link" itemprop="url">基于springBoot,手写一个简单的RPC框架(一)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-22 15:49:52 / 修改时间：18:27:17" itemprop="dateCreated datePublished" datetime="2023-05-22T15:49:52+08:00">2023-05-22</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
 
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="基于springBoot-手写一个简单的RPC框架-一"><a href="#基于springBoot-手写一个简单的RPC框架-一" class="headerlink" title="基于springBoot,手写一个简单的RPC框架(一)"></a>基于springBoot,手写一个简单的RPC框架(一)</h1><h2 id="Code-pjpjsocute-rpc-service-personal-rcp-attempt-github-com"><a href="#Code-pjpjsocute-rpc-service-personal-rcp-attempt-github-com" class="headerlink" title="Code:pjpjsocute/rpc-service: personal rcp attempt (github.com)"></a>Code:<a target="_blank" rel="noopener" href="https://github.com/pjpjsocute/rpc-service">pjpjsocute/rpc-service: personal rcp attempt (github.com)</a></h2><h2 id="技术栈使用包括：springboot-Zookeeper-netty-java-spi"><a href="#技术栈使用包括：springboot-Zookeeper-netty-java-spi" class="headerlink" title="技术栈使用包括：springboot,Zookeeper,netty,java spi"></a>技术栈使用包括：springboot,Zookeeper,netty,java spi</h2><h2 id="RPC定义"><a href="#RPC定义" class="headerlink" title="RPC定义"></a>RPC定义</h2><p>远程过程调用（Remote Procedure Call）是一种通信机制，允许不同的服务之间通过网络进行通信和交互。</p>
-<p>通过RPC，一个服务可以向另一个服务发起请求并获取响应，就像本地调用一样，而无需开发者手动处理底层的网络通信细节。RPC框架会封装底层的网络传输，并提供了远程服务接口的定义、序列化和反序列化数据等功能。</p>
-<h3 id="rpc与http辨析："><a href="#rpc与http辨析：" class="headerlink" title="rpc与http辨析："></a><strong>rpc与http辨析：</strong></h3><p>​    HTTP是一种用于传输超文本的应用层协议，它在客户端和服务器之间进行通信。它基于请求-响应模型，客户端发送HTTP请求到服务器，服务器处理请求并返回相应的HTTP响应。RPC更类似一种架构思想，RPC可以用HTTP实现，TCP实现。</p>
-<h2 id="RPC流程"><a href="#RPC流程" class="headerlink" title="RPC流程"></a>RPC流程</h2><p>一个简单的RPC架构如图所示：</p>
-<p><img src="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/image-20230522161808172.png" alt="image-20230522161808172"></p>
-<h2 id="如何实现："><a href="#如何实现：" class="headerlink" title="如何实现："></a>如何实现：</h2><h3 id="一个简单的RPC调用链路："><a href="#一个简单的RPC调用链路：" class="headerlink" title="一个简单的RPC调用链路："></a>一个简单的RPC调用链路：</h3><p><img src="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/lei.zhou/Rpc/基于springBoot-手写一个简单的RPC框架-一/image-20230522163034434.png" alt="image-20230522163034434"></p>
-<h2 id="基于netty和ZK的服务端实现"><a href="#基于netty和ZK的服务端实现" class="headerlink" title="基于netty和ZK的服务端实现"></a>基于netty和ZK的服务端实现</h2><p>根据上图，首先我们需要实现服务注册。</p>
-<h3 id="服务注册："><a href="#服务注册：" class="headerlink" title="服务注册："></a>服务注册：</h3><p>目前RPC框架大都支持注解的方式进行注册，这里也使用相同的方式。</p>
-<h4 id="定义注册注解"><a href="#定义注册注解" class="headerlink" title="定义注册注解"></a>定义注册注解</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> RpcProvider &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Service group, default value is empty string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String <span class="title function_">project</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;default&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Service version, default value is 1.0</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String <span class="title function_">version</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;1.0&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Service group, default value is empty string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String <span class="title function_">group</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;default&quot;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.FIELD, ElementType.TYPE&#125;)</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> RpcConsumer &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Service project, default value is empty string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String <span class="title function_">project</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;default&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Service version, default value is 1.0</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String <span class="title function_">version</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;1.0&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Service group, default value is empty string</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String <span class="title function_">group</span><span class="params">()</span> <span class="keyword">default</span> <span class="string">&quot;default&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE, ElementType.METHOD&#125;)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Import(CustomBeanScannerRegistrar.class)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> SimpleRpcApplication &#123;</span><br><span class="line"></span><br><span class="line">    String[] basePackage();</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>​        该注解将定义服务版本，group(区分同名同项目的不同接口)，项目名，用于服务暴露。</p>
-<p>​        同理，还需要一个注解用于消费;一个注解定义需要扫描的包</p>
-<h4 id="在启动时注册服务"><a href="#在启动时注册服务" class="headerlink" title="在启动时注册服务"></a>在启动时注册服务</h4><h5 id="首先，需要将带有-provider的注解注册"><a href="#首先，需要将带有-provider的注解注册" class="headerlink" title="首先，需要将带有@provider的注解注册"></a>首先，需要将带有@provider的注解注册</h5><p>获取需要扫描的包，随后带有注解的bean进行注册进入spring即可</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CustomBeanScannerRegistrar</span> <span class="keyword">implements</span> <span class="title class_">ImportBeanDefinitionRegistrar</span>, ResourceLoaderAware &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ResourceLoader resourceLoader;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">API_SCAN_PARAM</span> <span class="operator">=</span> <span class="string">&quot;basePackage&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">SPRING_BEAN_BASE_PACKAGE</span> <span class="operator">=</span> <span class="string">&quot;org.example.ray&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry)</span> &#123;</span><br><span class="line">        <span class="comment">//get the scan annotation and the bean package to be scanned</span></span><br><span class="line">        String[] scanBasePackages = fetchScanBasePackage(importingClassMetadata);</span><br><span class="line">        LogUtil.info(<span class="string">&quot;scanning packages: [&#123;&#125;]&quot;</span>, (Object) scanBasePackages);</span><br><span class="line">        </span><br><span class="line"><span class="comment">//        //scan the package and register the bean</span></span><br><span class="line"><span class="comment">//        RpcBeanScanner rpcConsumerBeanScanner = new RpcBeanScanner(registry, RpcConsumer.class);</span></span><br><span class="line">        <span class="type">RpcBeanScanner</span> <span class="variable">rpcProviderBeanScanner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RpcBeanScanner</span>(registry, RpcProvider.class);</span><br><span class="line">        <span class="type">RpcBeanScanner</span> <span class="variable">springBeanScanner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RpcBeanScanner</span>(registry, Component.class);</span><br><span class="line">        <span class="keyword">if</span> (resourceLoader != <span class="literal">null</span>) &#123;</span><br><span class="line">            springBeanScanner.setResourceLoader(resourceLoader);</span><br><span class="line">            rpcProviderBeanScanner.setResourceLoader(resourceLoader);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rpcServiceCount</span> <span class="operator">=</span> rpcProviderBeanScanner.scan(scanBasePackages);</span><br><span class="line">        LogUtil.info(<span class="string">&quot;rpcServiceScanner扫描的数量 [&#123;&#125;]&quot;</span>, rpcServiceCount);</span><br><span class="line">        LogUtil.info(<span class="string">&quot;scanning RpcConsumer annotated beans end&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setResourceLoader</span><span class="params">(ResourceLoader resourceLoader)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.resourceLoader = resourceLoader;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> String[] fetchScanBasePackage(AnnotationMetadata importingClassMetadata)&#123;</span><br><span class="line">        <span class="type">AnnotationAttributes</span> <span class="variable">annotationAttributes</span> <span class="operator">=</span> AnnotationAttributes.fromMap(importingClassMetadata.getAnnotationAttributes(SimpleRpcApplication.class.getName()));</span><br><span class="line">        String[] scanBasePackages = <span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">if</span> (annotationAttributes != <span class="literal">null</span>) &#123;</span><br><span class="line">            scanBasePackages = annotationAttributes.getStringArray(API_SCAN_PARAM);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//user doesn&#x27;t specify the package to scan,use the Application base package</span></span><br><span class="line">        <span class="keyword">if</span> (scanBasePackages.length == <span class="number">0</span>) &#123;</span><br><span class="line">            scanBasePackages = <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;((org.springframework.core.type.StandardAnnotationMetadata) importingClassMetadata).getIntrospectedClass().getPackage().getName()&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> scanBasePackages;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="在bean初始化之前将服务和相关的配置进行注册，确保spring启动后服务已经注册成功"><a href="#在bean初始化之前将服务和相关的配置进行注册，确保spring启动后服务已经注册成功" class="headerlink" title="在bean初始化之前将服务和相关的配置进行注册，确保spring启动后服务已经注册成功"></a>在bean初始化之前将服务和相关的配置进行注册，确保spring启动后服务已经注册成功</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcBeanPostProcessor</span> <span class="keyword">implements</span> <span class="title class_">BeanPostProcessor</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcServiceRegistryAdapter adapter;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcSendingServiceAdapter  sendingServiceAdapter;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RpcBeanPostProcessor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.adapter = SingletonFactory.getInstance(RpcServiceRegistryAdapterImpl.class);;</span><br><span class="line">        <span class="built_in">this</span>.sendingServiceAdapter = ExtensionLoader.getExtensionLoader(RpcSendingServiceAdapter.class)</span><br><span class="line">            .getExtension(RpcRequestSendingEnum.NETTY.getName());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * register service</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> bean</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> beanName</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> BeansException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException &#123;</span><br><span class="line">        LogUtil.info(<span class="string">&quot;start process register service: &#123;&#125;&quot;</span>, bean);</span><br><span class="line">        <span class="comment">// register service</span></span><br><span class="line">        <span class="keyword">if</span> (bean.getClass().isAnnotationPresent(RpcProvider.class)) &#123;</span><br><span class="line">            <span class="type">RpcProvider</span> <span class="variable">annotation</span> <span class="operator">=</span> bean.getClass().getAnnotation(RpcProvider.class);</span><br><span class="line">            <span class="comment">// build rpc service config</span></span><br><span class="line">            <span class="type">RpcServiceConfig</span> <span class="variable">serviceConfig</span> <span class="operator">=</span> RpcServiceConfig.builder()</span><br><span class="line">                .service(bean)</span><br><span class="line">                .project(annotation.project())</span><br><span class="line">                .version(annotation.version())</span><br><span class="line">                .group(annotation.group())</span><br><span class="line">                .build();</span><br><span class="line">            LogUtil.info(<span class="string">&quot;register service: &#123;&#125;&quot;</span>, serviceConfig);</span><br><span class="line">            adapter.registryService(serviceConfig);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="实现服务注册的具体方法"><a href="#实现服务注册的具体方法" class="headerlink" title="实现服务注册的具体方法"></a>实现服务注册的具体方法</h5><p>注册一个服务，至少应该吧包括:服务提供者(ip)，服务名，以及@<code>RpcProvider</code> 中的变量，所以，可以先定义一个<code>RpcServiceConfig</code>.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServiceConfig</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * service version</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">version</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * target service</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Object service;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * belong to which project</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">project</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * group</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">group</span>   <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * generate service name,use to distinguish different service,and * can be split to get the service name</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">fetchRpcServiceName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.getProject() + <span class="string">&quot;*&quot;</span> + <span class="built_in">this</span>.getGroup() + <span class="string">&quot;*&quot;</span> + <span class="built_in">this</span>.getServiceName() + <span class="string">&quot;*&quot;</span> + <span class="built_in">this</span>.getVersion();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * get the interface name</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getServiceName</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.service.getClass().getInterfaces()[<span class="number">0</span>].getCanonicalName();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>提供2个方法，注册服务与根据服务名得到对应的bean</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">RpcServiceRegistryAdapter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rpcServiceConfig rpc service related attributes</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">registryService</span><span class="params">(RpcServiceConfig rpcServiceConfig)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rpcClassName rpc class name</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> service object</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Object <span class="title function_">getService</span><span class="params">(String rpcClassName)</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注册流程可以分为3步，生成地址-&gt;服务注册进入Zookeeper-&gt;注册进入缓存。这里使用一个ConcurrentHashMap来进行缓存服务(方法中最后调用了zookeeper的api进行注册，因为与RPC关联不大，所以略过，可以直接参考源码)。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServiceRegistryAdapterImpl</span> <span class="keyword">implements</span> <span class="title class_">RpcServiceRegistryAdapter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * cache map</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; serviceMap = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registryService</span><span class="params">(RpcServiceConfig rpcServiceConfig)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// first get address and service</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">hostAddress</span> <span class="operator">=</span> InetAddress.getLocalHost().getHostAddress();</span><br><span class="line">            <span class="comment">// add service to zk</span></span><br><span class="line">            LogUtil.info(<span class="string">&quot;add service to zk,service name&#123;&#125;,host:&#123;&#125;&quot;</span>, rpcServiceConfig.fetchRpcServiceName(),hostAddress);</span><br><span class="line">            registerServiceToZk(rpcServiceConfig.fetchRpcServiceName(),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InetSocketAddress</span>(hostAddress, PropertiesFileUtil.readPortFromProperties()));</span><br><span class="line">            <span class="comment">// add service to map cache</span></span><br><span class="line">            registerServiceToMap(rpcServiceConfig);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (UnknownHostException e) &#123;</span><br><span class="line">            LogUtil.error(<span class="string">&quot;occur exception when getHostAddress&quot;</span>, e);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getService</span><span class="params">(String rpcServiceName)</span> &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">service</span> <span class="operator">=</span> serviceMap.get(rpcServiceName);</span><br><span class="line">        <span class="keyword">if</span> (<span class="literal">null</span> == service) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RpcException</span>(RpcErrorMessageEnum.SERVICE_CAN_NOT_BE_FOUND.getCode(),<span class="string">&quot;service not found&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> service;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">registerServiceToZk</span><span class="params">(String rpcServiceName, InetSocketAddress inetSocketAddress)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">servicePath</span> <span class="operator">=</span> CuratorClient.ZK_REGISTER_ROOT_PATH + <span class="string">&quot;/&quot;</span> + rpcServiceName + inetSocketAddress.toString();</span><br><span class="line">        <span class="type">CuratorFramework</span> <span class="variable">zkClient</span> <span class="operator">=</span> CuratorClient.getZkClient();</span><br><span class="line">        CuratorClient.createPersistentNode(zkClient, servicePath);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">registerServiceToMap</span><span class="params">(RpcServiceConfig rpcServiceConfig)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">rpcServiceName</span> <span class="operator">=</span> rpcServiceConfig.fetchRpcServiceName();</span><br><span class="line">        <span class="keyword">if</span> (serviceMap.containsKey(rpcServiceName)) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        serviceMap.put(rpcServiceName, rpcServiceConfig.getService());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>​    到这里，一个服务的注册流程已经完成。</p>
-<p>### </p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/21/LeetCode/LeetCode-005/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/21/LeetCode/LeetCode-005/" class="post-title-link" itemprop="url">LeetCode-005,如何一步步思考到动态规划</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-21 16:14:10" itemprop="dateCreated datePublished" datetime="2023-05-21T16:14:10+08:00">2023-05-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-22 15:59:41" itemprop="dateModified" datetime="2023-05-22T15:59:41+08:00">2023-05-22</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/21/LeetCode/LeetCode-005/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/21/LeetCode/LeetCode-005/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Q"><a href="#Q" class="headerlink" title="Q:"></a>Q:</h3><p>给你一个字符串 <code>s</code>，找到 <code>s</code> 中最长的回文子串。</p>
-<p>如果字符串的反序与原始字符串相同，则该字符串称为回文字符串。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/21/LeetCode/LeetCode-005/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -383,10 +194,9 @@
       <meta itemprop="name" content="Ray‘s Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/" class="post-title-link" itemprop="url">基于springBoot,手写一个简单的RPC框架(二)</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          基于springBoot,手写一个简单的RPC框架(二)
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -439,7 +249,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="基于springBoot-手写一个简单的RPC框架-二"><a href="#基于springBoot-手写一个简单的RPC框架-二" class="headerlink" title="基于springBoot,手写一个简单的RPC框架(二)"></a>基于springBoot,手写一个简单的RPC框架(二)</h1><p><img src="/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/基于springBoot-手写一个简单的RPC框架-二/image-20230522163034434.png" alt="image-20230522163034434"></p>
+        <h1 id="基于springBoot-手写一个简单的RPC框架-二"><a href="#基于springBoot-手写一个简单的RPC框架-二" class="headerlink" title="基于springBoot,手写一个简单的RPC框架(二)"></a>基于springBoot,手写一个简单的RPC框架(二)</h1><p><img src="/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/基于springBoot-手写一个简单的RPC框架-二/image-20230522163034434.png" alt="image-20230522163034434"></p>
 <p>继续上一章，实现了服务注册后需要实现服务调用。</p>
 <h3 id="服务执行"><a href="#服务执行" class="headerlink" title="服务执行"></a>服务执行</h3><p>一个RPC的服务调用应该分为以下几步：</p>
 <p>请求监听；</p>
@@ -492,693 +302,46 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcRequestHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcServiceRegistryAdapter adapter;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RpcRequestHandler</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.adapter = SingletonFactory.getInstance(RpcServiceRegistryAdapterImpl.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Processing rpcRequest: call the corresponding method, and then return the</span></span><br><span class="line"><span class="comment">     * method</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">handle</span><span class="params">(RpcRequest request)</span> &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">service</span> <span class="operator">=</span> adapter.getService(request.fetchRpcServiceName());</span><br><span class="line">        <span class="keyword">return</span> invoke(request, service);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * get method execution results</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> rpcRequest client request</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> service service object</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> the result of the target method execution</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Object <span class="title function_">invoke</span><span class="params">(RpcRequest rpcRequest, Object service)</span> &#123;</span><br><span class="line">        Object result;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());</span><br><span class="line">            result = method.invoke(service, rpcRequest.getParameters());</span><br><span class="line">            LogUtil.info(<span class="string">&quot;service:[&#123;&#125;] successful invoke method:[&#123;&#125;]&quot;</span>, rpcRequest.getServiceName(),</span><br><span class="line">                rpcRequest.getMethodName());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException | IllegalArgumentException | InvocationTargetException</span><br><span class="line">            | IllegalAccessException e) &#123;</span><br><span class="line">            LogUtil.error(<span class="string">&quot;occur exception when invoke target method,error:&#123;&#125;,RpcRequest:&#123;&#125;&quot;</span>, e, rpcRequest);</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RpcException</span>(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE.getCode(), RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>至此，一个服务端的代码就完成了</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+              <a href="/tags/%E9%A1%B9%E7%9B%AE/" rel="tag"># 项目</a>
+              <a href="/tags/Rpc/" rel="tag"># Rpc</a>
+              <a href="/tags/spi/" rel="tag"># spi</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/15/Datastructures/BIT/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/15/Datastructures/BIT/" class="post-title-link" itemprop="url">树状数组</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-15 11:30:14 / 修改时间：17:42:56" itemprop="dateCreated datePublished" datetime="2023-05-15T11:30:14+08:00">2023-05-15</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/15/Datastructures/BIT/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/15/Datastructures/BIT/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="树状数组与力扣中的应用"><a href="#树状数组与力扣中的应用" class="headerlink" title="树状数组与力扣中的应用"></a>树状数组与力扣中的应用</h2><ul>
-<li><h3 id="为什么会需要树状数组"><a href="#为什么会需要树状数组" class="headerlink" title="为什么会需要树状数组"></a>为什么会需要树状数组</h3><ul>
-<li><h4 id="思考以下问题"><a href="#思考以下问题" class="headerlink" title="思考以下问题"></a>思考以下问题</h4></li>
-</ul>
-<p><strong>QA</strong>:</p>
-<p>假设存在一个整数序列input，例如<code>intput = [1,2,7,4,3]</code>，要求前K个数的和。</p>
-<p><strong>Sulotion</strong>:</p>
-<p>一般我们会求一个前缀和数组<code>preSumArray</code>,其中<code>preSumArray[i]</code>代表前<code>i</code>个数的和，这样我们求前N个数的和只需要返回<code>preSumArray[N]</code>， 时间复杂度为O(1),如果需要查询K次，则复杂度为O(K).</p>
-<ul>
-<li><h4 id="升级这个问题"><a href="#升级这个问题" class="headerlink" title="升级这个问题"></a>升级这个问题</h4></li>
-</ul>
-<p><strong>QA</strong>:</p>
-<p>假设存在一个整数序列input，例如<code>intput = [1,2,7,4,3]</code>，现在在我们获取前N个数的和时，可能会先将<code>i</code>位置的数增加/减少<code>value</code>。</p>
-<p><strong>Sulotion</strong>:</p>
-<p>一般我们会求一个前缀和数组<code>preSumArray</code>,其中<code>preSumArray[i]</code>代表前<code>i</code>个数的和，如上一个问题所示，我们依旧可以在O(1)的时间得到前缀和。但是如果我们需要在第<code>i</code>位置插入一个数<code>x</code>，在进行更新时需要更新<code>i</code>之后的所有<code>preSumArray</code>，此时单次的更新时间为O(N)，K次查询的复杂度为O(KN)。如果我们不使用<code>preSumArray</code>，那么更新复杂度为O(1),查询复杂度会变为O(N)。</p>
-<p><strong>这时树桩数组可以帮助我们快速解决这个问题</strong></p></li></ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/15/Datastructures/BIT/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/13/LeetCode/LeetCode-813/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/13/LeetCode/LeetCode-813/" class="post-title-link" itemprop="url">以LeetCode_813为例,从递归到记忆化递归到DP</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-13 16:14:10 / 修改时间：00:34:45" itemprop="dateCreated datePublished" datetime="2023-05-13T16:14:10+08:00">2023-05-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/13/LeetCode/LeetCode-813/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/13/LeetCode/LeetCode-813/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Q"><a href="#Q" class="headerlink" title="Q:"></a>Q:</h3><p>给定数组 <code>nums</code> 和一个整数 <code>k</code> 。我们将给定的数组 <code>nums</code> 分成 <strong>最多</strong> <code>k</code> 个相邻的非空子数组 。 <strong>分数</strong> 由每个子数组内的平均值的总和构成。</p>
-<p>注意我们必须使用 <code>nums</code> 数组中的每一个数进行分组，并且分数不一定需要是整数。</p>
-<p>返回我们所能得到的最大 <strong>分数</strong> 是多少。答案误差在 <code>10-6</code> 内被视为是正确的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/13/LeetCode/LeetCode-813/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/05/15/Datastructures/BIT/" rel="prev" title="树状数组">
+      <i class="fa fa-chevron-left"></i> 树状数组
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/05/21/LeetCode/LeetCode-005/" rel="next" title="LeetCode-005,如何一步步思考到动态规划">
+      LeetCode-005,如何一步步思考到动态规划 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/12/LeetCode/LeetCode-381/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/12/LeetCode/LeetCode-381/" class="post-title-link" itemprop="url">LeetCode-862</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-05-12 17:14:10" itemprop="dateCreated datePublished" datetime="2023-05-12T17:14:10+08:00">2023-05-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-05-13 00:30:33" itemprop="dateModified" datetime="2023-05-13T00:30:33+08:00">2023-05-13</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/12/LeetCode/LeetCode-381/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/12/LeetCode/LeetCode-381/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Q"><a href="#Q" class="headerlink" title="Q:"></a>Q:</h3><p><code>RandomizedCollection</code> 是一种包含数字集合(可能是重复的)的数据结构。它应该支持插入和删除特定元素，以及删除随机元素。</p>
-<p>实现 <code>RandomizedCollection</code> 类:</p>
-<ul>
-<li><code>RandomizedCollection()</code>初始化空的 <code>RandomizedCollection</code> 对象。</li>
-<li><code>bool insert(int val)</code> 将一个 <code>val</code> 项插入到集合中，即使该项已经存在。如果该项不存在，则返回 <code>true</code> ，否则返回 <code>false</code> 。</li>
-<li><code>bool remove(int val)</code> 如果存在，从集合中移除一个 <code>val</code> 项。如果该项存在，则返回 <code>true</code> ，否则返回 <code>false</code> 。注意，如果 <code>val</code> 在集合中出现多次，我们只删除其中一个。</li>
-<li><code>int getRandom()</code> 从当前的多个元素集合中返回一个随机元素。每个元素被返回的概率与集合中包含的相同值的数量 <strong>线性相关</strong> 。</li>
-</ul>
-<p>您必须实现类的函数，使每个函数的 <strong>平均</strong> 时间复杂度为 <code>O(1)</code> 。</p>
-<p><strong>注意：</strong>生成测试用例时，只有在 <code>RandomizedCollection</code> 中 <strong>至少有一项</strong> 时，才会调用 <code>getRandom</code> 。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/12/LeetCode/LeetCode-381/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/12/LeetCode/LeetCode-862/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/12/LeetCode/LeetCode-862/" class="post-title-link" itemprop="url">LeetCode-862</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-12 16:14:10 / 修改时间：16:26:38" itemprop="dateCreated datePublished" datetime="2023-05-12T16:14:10+08:00">2023-05-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/12/LeetCode/LeetCode-862/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/12/LeetCode/LeetCode-862/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Q"><a href="#Q" class="headerlink" title="Q:"></a>Q:</h3><p>给你一个整数数组 <code>nums</code> 和一个整数 <code>k</code> ，找出 <code>nums</code> 中和至少为 <code>k</code> 的 <strong>最短非空子数组</strong> ，并返回该子数组的长度。如果不存在这样的 <strong>子数组</strong> ，返回 <code>-1</code> 。</p>
-<p><strong>子数组</strong> 是数组中 <strong>连续</strong> 的一部分。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/12/LeetCode/LeetCode-862/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/12/LeetCode/LeetCode-406/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/12/LeetCode/LeetCode-406/" class="post-title-link" itemprop="url">LeetCode-406</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-12 16:13:50 / 修改时间：16:16:05" itemprop="dateCreated datePublished" datetime="2023-05-12T16:13:50+08:00">2023-05-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/12/LeetCode/LeetCode-406/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/12/LeetCode/LeetCode-406/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Q"><a href="#Q" class="headerlink" title="Q:"></a>Q:</h3><p>假设有打乱顺序的一群人站成一个队列，数组 <code>people</code> 表示队列中一些人的属性（不一定按顺序）。每个 <code>people[i] = [hi, ki]</code> 表示第 <code>i</code> 个人的身高为 <code>hi</code> ，前面 <strong>正好</strong> 有 <code>ki</code> 个身高大于或等于 <code>hi</code> 的人。</p>
-<p>请你重新构造并返回输入数组 <code>people</code> 所表示的队列。返回的队列应该格式化为数组 <code>queue</code> ，其中 <code>queue[j] = [hj, kj]</code> 是队列中第 <code>j</code> 个人的属性（<code>queue[0]</code> 是排在队列前面的人）。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/12/LeetCode/LeetCode-406/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/12/algorithm/KMP-algorithm/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/12/algorithm/KMP-algorithm/" class="post-title-link" itemprop="url">KMP algorithm</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-12 15:44:17 / 修改时间：16:09:07" itemprop="dateCreated datePublished" datetime="2023-05-12T15:44:17+08:00">2023-05-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/12/algorithm/KMP-algorithm/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/12/algorithm/KMP-algorithm/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="KMP算法"><a href="#KMP算法" class="headerlink" title="KMP算法:"></a>KMP算法:</h3><p>​    KMP (Knuth-Morris-Pratt) 算法是一种用于字符串搜索的算法，可以在一个文本串S内查找一个词W的出现位置。</p>
-<p>基本思想是，当子串与目标字符串不匹配时，其已知足够的信息能确定下一步的搜索不会导致目标字符串的漏检。这样，算法就不会进行无效的检查。</p>
-<p>下面是KMP算法的步骤：</p>
-<ol>
-<li>构造一个”部分匹配表”（也称为 “失败函数”）。这是一个数组，对于给定的查找词，表中的每个元素都包含了当匹配失败时查找词应该跳转的位置。</li>
-<li>使用这个表来进行字符串搜索。当在文本串中发生匹配失败时，可以直接跳过前面已知不会匹配的部分。</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/12/algorithm/KMP-algorithm/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/12/algorithm/chatGPT-with-confluence/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Ray zhou">
-      <meta itemprop="description" content="My bolg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ray‘s Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/05/12/algorithm/chatGPT-with-confluence/" class="post-title-link" itemprop="url">chatGPT with confluence</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-05-12 15:44:05 / 修改时间：15:57:11" itemprop="dateCreated datePublished" datetime="2023-05-12T15:44:05+08:00">2023-05-12</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/05/12/algorithm/chatGPT-with-confluence/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/12/algorithm/chatGPT-with-confluence/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Target"><a href="#Target" class="headerlink" title="Target:"></a>Target:</h3><p>由于工作时Confluence中的文件太多，也比较杂乱，难以阅读，所以希望基于chatGPT能够帮助我快速从文件中获取我想要的知识</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/12/algorithm/chatGPT-with-confluence/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
           </div>
           
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -1225,6 +388,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C"><span class="nav-number">1.</span> <span class="nav-text">基于springBoot,手写一个简单的RPC框架(二)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%89%A7%E8%A1%8C"><span class="nav-number">1.0.1.</span> <span class="nav-text">服务执行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E7%9B%91%E5%90%AC"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">请求监听</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E4%B8%8E%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">编码与协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.0.1.2.1.</span> <span class="nav-text">协议</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%A7%A3%E7%A0%81"><span class="nav-number">1.0.1.2.2.</span> <span class="nav-text">解码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%96%E7%A0%81"><span class="nav-number">1.0.1.2.3.</span> <span class="nav-text">编码</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%92%8C%E8%B0%83%E7%94%A8"><span class="nav-number">1.0.1.3.</span> <span class="nav-text">请求处理和调用</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
