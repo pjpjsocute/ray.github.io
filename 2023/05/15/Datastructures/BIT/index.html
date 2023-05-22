@@ -23,23 +23,23 @@
   <meta name="description" content="树状数组与力扣中的应用 为什么会需要树状数组 思考以下问题  QA: 假设存在一个整数序列input，例如intput &#x3D; [1,2,7,4,3]，要求前K个数的和。 Sulotion: 一般我们会求一个前缀和数组preSumArray,其中preSumArray[i]代表前i个数的和，这样我们求前N个数的和只需要返回preSumArray[N]， 时间复杂度为O(1),如果需要查询K次，则复杂度">
 <meta property="og:type" content="article">
 <meta property="og:title" content="树状数组">
-<meta property="og:url" content="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/index.html">
+<meta property="og:url" content="http://pjpjsocute.github.io/2023/05/15/Datastructures/BIT/index.html">
 <meta property="og:site_name" content="Ray‘s Blog">
 <meta property="og:description" content="树状数组与力扣中的应用 为什么会需要树状数组 思考以下问题  QA: 假设存在一个整数序列input，例如intput &#x3D; [1,2,7,4,3]，要求前K个数的和。 Sulotion: 一般我们会求一个前缀和数组preSumArray,其中preSumArray[i]代表前i个数的和，这样我们求前N个数的和只需要返回preSumArray[N]， 时间复杂度为O(1),如果需要查询K次，则复杂度">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png">
-<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png">
+<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/15/Datastructures/BIT/WX20230515-152510@2x.png">
+<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/15/Datastructures/BIT/WX20230515-152510@2x.png">
 <meta property="article:published_time" content="2023-05-15T03:30:14.000Z">
 <meta property="article:modified_time" content="2023-05-15T09:42:56.771Z">
 <meta property="article:author" content="Ray zhou">
 <meta property="article:tag" content="java">
-<meta property="article:tag" content="力扣之旅">
 <meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="力扣之旅">
 <meta property="article:tag" content="树状数组">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png">
+<meta name="twitter:image" content="http://pjpjsocute.github.io/2023/05/15/Datastructures/BIT/WX20230515-152510@2x.png">
 
-<link rel="canonical" href="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/">
+<link rel="canonical" href="http://pjpjsocute.github.io/2023/05/15/Datastructures/BIT/">
 
 
 <script id="page-configurations">
@@ -182,7 +182,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/">
+    <link itemprop="mainEntityOfPage" href="http://pjpjsocute.github.io/2023/05/15/Datastructures/BIT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -227,8 +227,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/" itemprop="commentCount"></span>
+    <a title="valine" href="/2023/05/15/Datastructures/BIT/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/05/15/Datastructures/BIT/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -274,7 +274,7 @@
 <li><h5 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h5></li>
 </ul>
 <p>本质上它仍是一个数组，并且与<code>preSumArray</code>相似，存的依旧是和数组，但是他存放的是 <strong>i位之前(包括i)，lowbit(i)个整数的和</strong>。可以用下图以及公式表示</p>
-<p><img src="/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png" alt="WX20230515-152510@2x"></p>
+<p><img src="/2023/05/15/Datastructures/BIT/WX20230515-152510@2x.png" alt="WX20230515-152510@2x"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">B(1) = A(1);</span><br><span class="line">B(2) = A(1)+A(2);</span><br><span class="line">B(3) = A(3);</span><br><span class="line">B(4) = A(1)+A(2)+A(3)+A(4);</span><br><span class="line">B(5) = A(5);</span><br><span class="line">B(6) = A(5)+A(6);</span><br><span class="line">B(7) = A(7);</span><br><span class="line">B(8) = A(1)+A(2)+A(3)+A(4)+A(5)+A(6)+A(7)+A(8);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p><strong>tip</strong>:树状数组的下标必须从1开始</p>
 </li>
@@ -299,7 +299,7 @@
 <p>如果我们要<code>update(6,7)</code>，也就是在6的位置+7，那我们根据上面的图，我们需要更新 <code>B(6)和B(8)</code>,因为 <code>B(6)</code>和<code>B(8)</code>的求和项均包含了A(6)。</p>
 <p><code>B(6) = A(5)+A(6);</code><br><code>B(8) = A(1)+A(2)+A(3)+A(4)+A(5)+A(6)+A(7)+A(8);</code></p>
 <p>所以现在的问题转换为如何知道BIT中所有包含A(i)的项。</p>
-<p><img src="/2023/05/15/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/WX20230515-152510@2x.png" alt="WX20230515-152510@2x"></p>
+<p><img src="/2023/05/15/Datastructures/BIT/WX20230515-152510@2x.png" alt="WX20230515-152510@2x"></p>
 <p>比如我们我们要找到所有覆盖A(5)的BIT。</p>
 <p>首先：B(5)一定覆盖了。</p>
 <p>其次，我们需要找到距离B(5)最近覆盖它的BIT，即B(6)</p>
@@ -353,8 +353,8 @@
       <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/java/" rel="tag"># java</a>
-              <a href="/tags/%E5%8A%9B%E6%89%A3%E4%B9%8B%E6%97%85/" rel="tag"># 力扣之旅</a>
               <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"># 数据结构</a>
+              <a href="/tags/%E5%8A%9B%E6%89%A3%E4%B9%8B%E6%97%85/" rel="tag"># 力扣之旅</a>
               <a href="/tags/%E6%A0%91%E7%8A%B6%E6%95%B0%E7%BB%84/" rel="tag"># 树状数组</a>
           </div>
 
@@ -364,10 +364,13 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2023/05/13/LeetCode/LeetCode-813/" rel="prev" title="以LeetCode_813为例,从递归到记忆化递归到DP">
-      <i class="fa fa-chevron-left"></i> 以LeetCode_813为例,从递归到记忆化递归到DP
+    <a href="/2023/05/13/LeetCode/LeetCode-005/" rel="prev" title="LeetCode-005,如何一步步思考到动态规划">
+      <i class="fa fa-chevron-left"></i> LeetCode-005,如何一步步思考到动态规划
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2023/05/16/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/" rel="next" title="基于springBoot,手写一个简单的RPC框架(二)">
+      基于springBoot,手写一个简单的RPC框架(二) <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -441,7 +444,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -454,7 +457,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
