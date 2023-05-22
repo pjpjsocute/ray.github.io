@@ -28,9 +28,9 @@
 <meta property="og:description" content="基于springBoot,手写一个简单的RPC框架(二) 继续上一章，实现了服务注册后需要实现服务调用。 服务执行一个RPC的服务调用应该分为以下几步： 请求监听； 解码请求； 方法调用； 返回结果； 接下来将依次实现以上功能； 请求监听需要定义一个RpcRequest请求类，由于后续处理 123456789101112131415161718192021222324252627282930313">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://pjpjsocute.github.io/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/image-20230522163034434.png">
-<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/image-20230522174913202.png">
+<meta property="og:image" content="http://pjpjsocute.github.io/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/image-20230522174913202.png">
 <meta property="article:published_time" content="2023-05-22T07:49:52.000Z">
-<meta property="article:modified_time" content="2023-05-22T10:30:09.753Z">
+<meta property="article:modified_time" content="2023-05-22T10:31:51.355Z">
 <meta property="article:author" content="Ray zhou">
 <meta property="article:tag" content="项目">
 <meta property="article:tag" content="java">
@@ -206,7 +206,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-05-22 15:49:52 / 修改时间：18:30:09" itemprop="dateCreated datePublished" datetime="2023-05-22T15:49:52+08:00">2023-05-22</time>
+              <time title="创建时间：2023-05-22 15:49:52 / 修改时间：18:31:51" itemprop="dateCreated datePublished" datetime="2023-05-22T15:49:52+08:00">2023-05-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -264,7 +264,7 @@
 <h4 id="编码与协议"><a href="#编码与协议" class="headerlink" title="编码与协议"></a>编码与协议</h4><p>实现了服务后，我们需要依次为他补充编码和处理类。</p>
 <p>在实现编码的服务之前，首先应该确定底层的编码协议。</p>
 <h5 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h5><p>本项目参考一些已有的协议设计，选择了一种比较简单的协议设计方式，如下图所示:</p>
-<p><img src="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/lei.zhou/Rpc/基于springBoot-手写一个简单的RPC框架-二/image-20230522174913202.png" alt="image-20230522174913202"></p>
+<p><img src="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%BA%8C/image-20230522174913202.png" alt="image-20230522174913202"></p>
 <p>协议由一个16byte的header和body组成。</p>
 <p>其中0-4是magic code，用于校验</p>
 <p>4-5为自定义的协议版本</p>
@@ -316,13 +316,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2023/05/21/LeetCode/LeetCode-005/" rel="prev" title="LeetCode-005,如何一步步思考到动态规划">
-      <i class="fa fa-chevron-left"></i> LeetCode-005,如何一步步思考到动态规划
+    <a href="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/" rel="prev" title="基于springBoot,手写一个简单的RPC框架(一)">
+      <i class="fa fa-chevron-left"></i> 基于springBoot,手写一个简单的RPC框架(一)
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2023/05/22/Rpc/%E5%9F%BA%E4%BA%8EspringBoot-%E6%89%8B%E5%86%99%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84RPC%E6%A1%86%E6%9E%B6-%E4%B8%80/" rel="next" title="基于springBoot,手写一个简单的RPC框架(一)">
-      基于springBoot,手写一个简单的RPC框架(一) <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
